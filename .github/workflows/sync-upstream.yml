@@ -1,0 +1,28 @@
+name: Sync OpenWebUI Updates
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"  # Runs every Monday at midnight
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Add Upstream
+        run: git remote add upstream https://github.com/open-webui/open-webui.git || true
+
+      - name: Fetch Upstream
+        run: git fetch upstream
+
+      - name: Merge Upstream
+        run: |
+          git checkout main
+          git merge upstream/main --allow-unrelated-histories -m "Merge upstream updates"
+          git push origin main

@@ -169,6 +169,16 @@ COPY --chown=$UID:$GID --from=build /app/build /app/build
 COPY --chown=$UID:$GID --from=build /app/CHANGELOG.md /app/CHANGELOG.md
 COPY --chown=$UID:$GID --from=build /app/package.json /app/package.json
 
+RUN rm -rf /app/build/static/favicon && \
+    mkdir -p /app/build/static/favicon && \
+    if [ -d "assets" ]; then \
+      cp -r assets/favicon.ico /app/build/static/favicon/favicon.ico; \
+      cp -r assets/favicon.png /app/build/static/favicon/favicon.png; \
+      cp -r assets/favicon-96x96.png /app/build/static/favicon/favicon-96x96.png; \
+      cp -r assets/favicon.svg /app/build/static/favicon/favicon.svg; \
+      cp -r assets/apple-touch-icon.png /app/build/static/apple-touch-icon.png; \
+      cp -r assets/splash-screen.svg /app/build/static/splash-screen.svg; \
+    fi
 # copy backend files
 COPY --chown=$UID:$GID ./backend .
 

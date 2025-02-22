@@ -31,6 +31,10 @@ RUN npm ci
 
 COPY . .
 ENV APP_BUILD_HASH=${BUILD_HASH}
+
+# Increase memory limit for npm build
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 RUN npm run build
 
 ######## WebUI backend ########
@@ -61,10 +65,15 @@ ENV OLLAMA_BASE_URL="/ollama" \
 
 ## API Key and Security Config ##
 ENV OPENAI_API_KEY="" \
-    WEBUI_SECRET_KEY="" \
-    SCARF_NO_ANALYTICS=true \
-    DO_NOT_TRACK=true \
-    ANONYMIZED_TELEMETRY=false
+    WEBUI_SECRET_KEY=""
+
+# Ensure an .env file is created and contains WEBUI_SECRET_KEY on first run
+RUN if [ ! -f "/app/backend/.env" ]; then \
+      echo "Generating new WEBUI_SECRET_KEY..."; \
+      WEBUI_SECRET_KEY=$(openssl rand -hex 32); \
+      echo "WEBUI_SECRET_KEY=$WEBUI_SECRET_KEY" > /app/backend/.env; \
+      echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> /app/backend/.env; \
+    fi
 
 #### Other models #########################################################
 ## whisper TTS model settings ##
@@ -172,5 +181,13 @@ USER $UID:$GID
 ARG BUILD_HASH
 ENV WEBUI_BUILD_VERSION=${BUILD_HASH}
 ENV DOCKER=true
+
+# Copy custom branding assets into the container
+COPY static/favicon /app/build/static/favicon
+COPY static/splash-screen.svg /app/build/static/splash-screen.svg
+COPY static/apple-touch-icon.png /app/build/static/apple-touch-icon.png
+
+# Set the WebUI name
+ENV WEBUI_NAME="Chat.Sami"
 
 CMD [ "bash", "start.sh"]

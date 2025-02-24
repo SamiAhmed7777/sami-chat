@@ -165,8 +165,7 @@ RUN cp -f /app/build/static/assets/favicon.ico /app/build/static/favicon/favicon
     cp -f /app/build/static/assets/logo.png /app/backend/open_webui/static/logo.png || true && \
     cp -f /app/build/static/assets/splash.png /app/backend/open_webui/static/splash.png || true && \
     cp -f /app/build/static/assets/favicon.png /app/backend/open_webui/static/swagger_ui/favicon.png || true
-
-
+    cp -f /app/build/static/assets/splash-dark.png /app/backend/open_webui/static/splash-dark.png || true && \	
 	
 # Copy backend files
 COPY --chown=$UID:$GID ./backend .

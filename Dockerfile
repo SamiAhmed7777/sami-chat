@@ -141,39 +141,30 @@ COPY --chown=$UID:$GID --from=build /app/build /app/build
 COPY --chown=$UID:$GID --from=build /app/CHANGELOG.md /app/CHANGELOG.md
 COPY --chown=$UID:$GID --from=build /app/package.json /app/package.json
 
-# Copy branding assets from assets folder
-COPY assets /app/build/static/assets
-
-# Ensure necessary directories exist
-RUN mkdir -p /app/build/static/favicon && \
-    mkdir -p /app/backend/open_webui/static && \
-    mkdir -p /app/backend/open_webui/static/swagger_ui && \
-    mkdir -p /app/build/static/assets && \
-    mkdir -p /app/build/static && \
-    mkdir -p /app/build/static/favicon && \
-    mkdir -p /app/backend/open_webui/static
-
 # Ensure branding assets are copied before modifying them
 COPY assets /app/build/static/assets
 
-# Remove old branding assets and copy the new ones to the correct locations
-RUN rm -rf /app/build/static/favicon && \
-    mkdir -p /app/build/static/favicon && \
+# Create necessary directories if they don't exist
+RUN mkdir -p /app/build/static/favicon && \
     mkdir -p /app/backend/open_webui/static/ && \
     mkdir -p /app/backend/open_webui/static/swagger_ui/ && \
-    test -f /app/build/static/assets/favicon.ico && cp /app/build/static/assets/favicon.ico /app/build/static/favicon/favicon.ico || true && \
-    test -f /app/build/static/assets/favicon.png && cp /app/build/static/assets/favicon.png /app/build/static/favicon/favicon.png || true && \
-    test -f /app/build/static/assets/favicon-96x96.png && cp /app/build/static/assets/favicon-96x96.png /app/build/static/favicon/favicon-96x96.png || true && \
-    test -f /app/build/static/assets/favicon.svg && cp /app/build/static/assets/favicon.svg /app/build/static/favicon/favicon.svg || true && \
-    test -f /app/build/static/assets/apple-touch-icon.png && cp /app/build/static/assets/apple-touch-icon.png /app/build/static/apple-touch-icon.png || true && \
-    test -f /app/build/static/assets/splash-screen.svg && cp /app/build/static/assets/splash-screen.svg /app/build/static/splash-screen.svg || true && \
-    test -f /app/build/static/assets/site.webmanifest && cp /app/build/static/assets/site.webmanifest /app/build/static/site.webmanifest || true && \
-    test -f /app/build/static/assets/logo.png && cp /app/build/static/assets/logo.png /app/build/static/logo.png || true && \
-    test -f /app/build/static/assets/splash.png && cp /app/build/static/assets/splash.png /app/build/static/splash.png || true && \
-    test -f /app/build/static/assets/favicon.png && cp /app/build/static/assets/favicon.png /app/backend/open_webui/static/favicon.png || true && \
-    test -f /app/build/static/assets/logo.png && cp /app/build/static/assets/logo.png /app/backend/open_webui/static/logo.png || true && \
-    test -f /app/build/static/assets/splash.png && cp /app/build/static/assets/splash.png /app/backend/open_webui/static/splash.png || true && \
-    test -f /app/build/static/assets/favicon.png && cp /app/build/static/assets/favicon.png /app/backend/open_webui/static/swagger_ui/favicon.png || true
+    mkdir -p /app/build/static/ && \
+    mkdir -p /app/build/static/assets/
+
+# Copy assets if they exist (fallback to || true to prevent failures)
+RUN cp -f /app/build/static/assets/favicon.ico /app/build/static/favicon/favicon.ico || true && \
+    cp -f /app/build/static/assets/favicon.png /app/build/static/favicon/favicon.png || true && \
+    cp -f /app/build/static/assets/favicon-96x96.png /app/build/static/favicon/favicon-96x96.png || true && \
+    cp -f /app/build/static/assets/favicon.svg /app/build/static/favicon/favicon.svg || true && \
+    cp -f /app/build/static/assets/apple-touch-icon.png /app/build/static/apple-touch-icon.png || true && \
+    cp -f /app/build/static/assets/splash-screen.svg /app/build/static/splash-screen.svg || true && \
+    cp -f /app/build/static/assets/site.webmanifest /app/build/static/site.webmanifest || true && \
+    cp -f /app/build/static/assets/logo.png /app/build/static/logo.png || true && \
+    cp -f /app/build/static/assets/splash.png /app/build/static/splash.png || true && \
+    cp -f /app/build/static/assets/favicon.png /app/backend/open_webui/static/favicon.png || true && \
+    cp -f /app/build/static/assets/logo.png /app/backend/open_webui/static/logo.png || true && \
+    cp -f /app/build/static/assets/splash.png /app/backend/open_webui/static/splash.png || true && \
+    cp -f /app/build/static/assets/favicon.png /app/backend/open_webui/static/swagger_ui/favicon.png || true
 
 
 	
